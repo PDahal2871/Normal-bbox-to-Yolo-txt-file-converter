@@ -1,5 +1,6 @@
-def convert_to_normal(dt)
-#     dt is line of txt files
+import cv2, os, shutil
+
+def convert_to_normal(dt,dh,dw):
 #     fl = open(label_path, 'r')
 #     data = fl.readlines()
 #     fl.close()
@@ -7,7 +8,7 @@ def convert_to_normal(dt)
 #     for dt in data:
 
     # Split string to float
-    classes = int(dt.split(' ')[0])
+    classes = str(dt.split(' ')[0])
     x = float(dt.split(' ')[1])
     y = float(dt.split(' ')[2])
     w = float(dt.split(' ')[3])
@@ -30,4 +31,17 @@ def convert_to_normal(dt)
         b = dh - 1
 
 
-    return (l,t,r,b)
+    return classes, (l,t,r,b)
+
+
+im = cv2.imread(os.path.join('test.png'))
+dh, dw, _ = im.shape
+
+with open(os.path.join('test.txt'),'r') as f:
+    for lines in f.readlines():
+        cls, bbox = convert_to_normal(lines, dh,dw)
+#         if cls in ['35','36']:
+#             continue
+#         nm = class_dict[cls]
+        img_crop = im[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+        cv2.imwrite(os.path.join('test.png'), img_crop)
